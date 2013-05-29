@@ -2,14 +2,17 @@ package postmaster
 
 import (
 	"github.com/jmcvetta/restclient"
+	"fmt"
 )
 
 func (p *Postmaster) MakeUrl(version string, endpoint string) string {
+	var url string
 	if p.BaseUrl != "" {
-		return p.BaseUrl + "/" + version + "/" + endpoint
+		url = p.BaseUrl
 	} else {
-		return "http://api.postmaster.io" + "/" + version + "/" + endpoint
+		url = "http://api.postmaster.io"
 	}
+	return fmt.Sprintf("%s/%s/%s", url, version, endpoint)
 }
 
 func (p *Postmaster) Get(version string, endpoint string, params restclient.Params, result interface{}, err interface{}) (status int, e error) {
