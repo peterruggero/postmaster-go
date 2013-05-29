@@ -5,6 +5,14 @@ import (
 	"net/url"
 )
 
+type PostmasterError struct {
+	Message string
+}
+
+func (e *PostmasterError) Error() string {
+	return e.Message
+}
+
 type Postmaster struct {
 	ApiKey   string
 	BaseUrl  string

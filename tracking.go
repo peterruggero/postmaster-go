@@ -1,9 +1,8 @@
 package postmaster
 
 import (
-	"github.com/jmcvetta/restclient"
 	"fmt"
-	"log"
+	"github.com/jmcvetta/restclient"
 )
 
 type TrackingHistory struct {
@@ -20,28 +19,18 @@ type TrackingResponse struct {
 	History    []TrackingHistory
 }
 
-func (p *Postmaster) TrackRef(trackingNumber string) TrackingResponse {
+func (p *Postmaster) TrackRef(trackingNumber string) (*TrackingResponse, error) {
 	params := restclient.Params{
 		"tracking": trackingNumber,
 	}
 	res := TrackingResponse{}
-	e := struct {
-		Message string
-	}{}
-	status, err := p.Get("v1", "track", params, &res, &e)
-	if err != nil {
-		log.Fatal(status)
-		log.Fatal(err)
-	}
-	return res
+	_, err := p.Get("v1", "track", params, &res)
+	return &res, err
 }
 
-func (p *Postmaster) TrackShipment(shipmentId int) TrackingResponse {
+func (p *Postmaster) TrackShipment(shipmentId int) (*TrackingResponse, error) {
 	endpoint := fmt.Sprintf("shipments/%d/track", shipmentId)
 	res := TrackingResponse{}
-	e := struct {
-		Message string
-	}{}
-	p.Get("v1", endpoint, nil, &res, &e)
-	return res
+	_, err := p.Get("v1", endpoint, nil, &res)
+	return &res, err
 }
