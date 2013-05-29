@@ -21,7 +21,7 @@ type TrackingResponse struct {
 
 func (p *Postmaster) Track(number string) TrackingResponse {
 	// Request
-	dd := restclient.Params{
+	params := restclient.Params{
 		"tracking": number,
 	}
 	// Response
@@ -31,21 +31,7 @@ func (p *Postmaster) Track(number string) TrackingResponse {
 		Message string
 	}{}
 	// Do!
-	var url string
-	if p.BaseUrl != "" {
-		url = p.BaseUrl + "/v1/track"
-	} else {
-		url = "http://api.postmaster.io/v1/track"
-	}
-	rr := restclient.RequestResponse{
-		Url:      url,
-		Userinfo: p.Userinfo,
-		Method:   "GET",
-		Params:   dd,
-		Result:   &res,
-		Error:    &e,
-	}
-	status, err := p.Client.Do(&rr)
+	status, err := p.Get("v1", "track", params, &res, &e)
 	if err != nil {
 		log.Fatal(status)
 		log.Fatal(err)
