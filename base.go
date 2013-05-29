@@ -2,6 +2,7 @@ package postmaster
 
 import (
 	"github.com/jmcvetta/restclient"
+	"net/http"
 	"net/url"
 )
 
@@ -18,15 +19,21 @@ type Postmaster struct {
 	BaseUrl  string
 	Client   *restclient.Client
 	Userinfo *url.Userinfo
+	Headers  *http.Header
 }
 
 func New(key string) *Postmaster {
 	client := restclient.New()
 	client.UnsafeBasicAuth = true
 	userinfo := url.UserPassword(key, "")
+	header := http.Header{
+		"Content-Type": []string{"application/x-www-form-urlencoded"},
+		"User-Agent": []string{"Postmaster/1.0 Go"},
+	}
 	return &Postmaster{
 		ApiKey:   key,
 		Client:   client,
 		Userinfo: userinfo,
+		Headers:  &header,
 	}
 }
