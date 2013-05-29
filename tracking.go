@@ -7,15 +7,21 @@ import (
 
 type TrackingHistory struct {
 	Status      string
-	City        string
-	Timestamp   int
-	Code        string
 	Description string
+	Timestamp   int
+	Street      []string
+	PostalCode  string `json:"postal_code"`
+	CountryCode string `json:"country_code"`
+	City        string
+	Code        string
+	State       string
+	Text        string
 }
 
 type TrackingResponse struct {
 	Status     string
 	LastUpdate int `json:"last_update"`
+	SignedBy   string `json:"signed_by"`
 	History    []TrackingHistory
 }
 
