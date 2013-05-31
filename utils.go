@@ -3,10 +3,9 @@ package postmaster
 import (
 	"fmt"
 	"net/url"
-	"strings"
 	"reflect"
+	"strings"
 )
-
 
 // urlencode joins parameters from map[string]string with ampersand (&), and
 // also escapes their values
@@ -20,14 +19,12 @@ func urlencode(params map[string]string) string {
 	return strings.Join(arr, "&")
 }
 
-
 // MapStruct converts struct to map[string]string, using fields' names as keys
 // and fields' values as values.
 // It also automagically converts any nested structures.
 func MapStruct(s interface{}) map[string]string {
 	return mapStructNested(s, "")
 }
-
 
 // mapStructNested does all the dirty job that mapStruct was too lazy to do.
 func mapStructNested(s interface{}, baseName string) map[string]string {
