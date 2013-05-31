@@ -16,7 +16,7 @@ func urlencode(params map[string]string) string {
 			arr = append(arr, fmt.Sprintf("%s=%s", k, url.QueryEscape(v)))
 		}
 	}
-	return strings.Join(arr, "&") + "&"
+	return "&" + strings.Join(arr, "&") + "&"
 }
 
 // MapStruct converts struct to map[string]string, using fields' names as keys
