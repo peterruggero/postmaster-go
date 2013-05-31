@@ -66,3 +66,14 @@ func mapStructNested(s interface{}, baseName string) map[string]string {
 	}
 	return result
 }
+
+// makeUrl creates full URL from baseUrl, version and endpoint.
+func (p *Postmaster) makeUrl(version string, endpoint string) string {
+	var url string
+	if p.BaseUrl != "" {
+		url = p.BaseUrl
+	} else {
+		url = "http://api.postmaster.io"
+	}
+	return fmt.Sprintf("%s/%s/%s", url, version, endpoint)
+}
