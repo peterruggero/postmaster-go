@@ -3,8 +3,6 @@ package postmaster
 import (
 	"fmt"
 	"github.com/jmcvetta/restclient"
-	"net/url"
-	"strings"
 )
 
 func (p *Postmaster) MakeUrl(version string, endpoint string) string {
@@ -15,16 +13,6 @@ func (p *Postmaster) MakeUrl(version string, endpoint string) string {
 		url = "http://api.postmaster.io"
 	}
 	return fmt.Sprintf("%s/%s/%s", url, version, endpoint)
-}
-
-func (p *Postmaster) Urlencode(params map[string]string) string {
-	arr := make([]string, len(params))
-	for k, v := range params {
-		if fmt.Sprintf("%s", v) != "" {
-			arr = append(arr, fmt.Sprintf("%s=%s", k, url.QueryEscape(v)))
-		}
-	}
-	return strings.Join(arr, "&")
 }
 
 func (p *Postmaster) Get(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
@@ -51,7 +39,7 @@ func (p *Postmaster) Put(version string, endpoint string, params restclient.Para
 		Url:      p.MakeUrl(version, endpoint),
 		Userinfo: p.Userinfo,
 		Method:   "PUT",
-		Data:     p.Urlencode(params),
+		Data:     urlencode(params),
 		Result:   result,
 		Error:    &err,
 		Header:   p.Headers,
@@ -65,12 +53,11 @@ func (p *Postmaster) Put(version string, endpoint string, params restclient.Para
 
 func (p *Postmaster) Post(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
-	fmt.Println(p.Urlencode(params))
 	rr := restclient.RequestResponse{
 		Url:      p.MakeUrl(version, endpoint),
 		Userinfo: p.Userinfo,
 		Method:   "POST",
-		Data:     p.Urlencode(params),
+		Data:     urlencode(params),
 		Result:   result,
 		Error:    &err,
 		Header:   p.Headers,

@@ -1,9 +1,5 @@
 package postmaster
 
-import (
-	"github.com/jmcvetta/restclient"
-)
-
 type Address struct {
 	Line1      string
 	Line2      string
@@ -24,10 +20,7 @@ type AddressResponse struct {
 }
 
 func (p *Postmaster) Validate(addr Address) (*AddressResponse, error) {
-	params := restclient.Params{
-		"line1": addr.Line1,
-		"line2": addr.Line2,
-	}
+	params := MapStruct(addr)
 	res := AddressResponse{}
 	_, err := p.Post("v1", "validate", params, &res)
 	return &res, err
