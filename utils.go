@@ -23,29 +23,44 @@ func urlencode(params map[string]string) string {
 
 // MapStruct converts struct to map[string]string, using fields' names as keys
 // and fields' values as values.
+// It also automagically converts any nested structures.
 func MapStruct(s interface{}) map[string]string {
+	return mapStructNested(s, "")
+}
+
+
+// mapStructNested does all the dirty job that mapStruct was too lazy to do.
+func mapStructNested(s interface{}, baseName string) map[string]string {
 	result := make(map[string]string)
+	// Is s a pointer? We don't want any of those here
+	if reflect.TypeOf(s).Kind() == reflect.Ptr {
+		s = reflect.TypeOf(s).Elem()
+	}
 	fields := reflect.TypeOf(s).NumField()
 	for i := 0; i < fields; i++ {
-		field := reflect.TypeOf(s).Field(i)
+		t := reflect.TypeOf(s).Field(i)
+		v := reflect.ValueOf(s).Field(i)
+		// Name is important
 		var name string
-		if json := field.Tag.Get("json"); json != "" {
+		if json := t.Tag.Get("json"); json != "" {
 			name = json
 		} else {
-			name = strings.ToLower(field.Name)
+			name = strings.ToLower(t.Name)
 		}
-		/*
-		TODO nested objects! better to do this with recursion
-		if type == struct {
-			for x in value {
-				map["parentName[name]"] = value
+		if baseName != "" {
+			name = fmt.Sprintf("%s[%s]", baseName, name)
+		}
+		// I wonder whether this is a nested object
+		if v.Kind() == reflect.Struct { // Nested, activate recursion!
+			m := mapStructNested(v.Interface(), name)
+			for mk, mv := range m {
+				result[mk] = mv
 			}
-		}
-		yay for pseudocode
-		*/
-		value := fmt.Sprintf("%v", reflect.ValueOf(s).Field(i).Interface())
-		if value != "" {
-			result[name] = value
+		} else { // Not nested
+			value := fmt.Sprintf("%v", v.Interface())
+			if value != "" {
+				result[name] = value
+			}
 		}
 	}
 	return result
