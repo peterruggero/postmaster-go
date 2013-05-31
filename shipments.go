@@ -49,9 +49,19 @@ func (s *Shipment) Create() (*ShipmentResponse, error) {
 	return &res, err
 }
 
+func (s *Shipment) Get() (*ShipmentResponse, error) {
+	if s.Id == -1 {
+		return nil, errors.New("You must provide a shipment ID.")
+	}
+	endpoint := fmt.Sprintf("shipments/%d", s.Id)
+	res := ShipmentResponse{}
+	_, err := s.p.Get("v1", endpoint, nil, &res)
+	return &res, err
+}
+
 func (s *Shipment) Void() (bool, error) {
 	if s.Id == -1 {
-		return false, errors.New("You must provide an shipment ID.")
+		return false, errors.New("You must provide a shipment ID.")
 	}
 	endpoint := fmt.Sprintf("shipments/%d/void", s.Id)
 	var res map[string]string
@@ -61,7 +71,7 @@ func (s *Shipment) Void() (bool, error) {
 
 func (s *Shipment) Track() (*TrackingResponse, error) {
 	if s.Id == -1 {
-		return nil, errors.New("You must provide an shipment ID.")
+		return nil, errors.New("You must provide a shipment ID.")
 	}
 	endpoint := fmt.Sprintf("shipments/%d/track", s.Id)
 	res := TrackingResponse{}
