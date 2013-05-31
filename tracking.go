@@ -1,7 +1,6 @@
 package postmaster
 
 import (
-	"fmt"
 	"github.com/jmcvetta/restclient"
 )
 
@@ -31,12 +30,5 @@ func (p *Postmaster) TrackRef(trackingNumber string) (*TrackingResponse, error) 
 	}
 	res := TrackingResponse{}
 	_, err := p.Get("v1", "track", params, &res)
-	return &res, err
-}
-
-func (p *Postmaster) TrackShipment(shipmentId int) (*TrackingResponse, error) {
-	endpoint := fmt.Sprintf("shipments/%d/track", shipmentId)
-	res := TrackingResponse{}
-	_, err := p.Get("v1", endpoint, nil, &res)
 	return &res, err
 }
