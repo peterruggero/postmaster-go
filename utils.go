@@ -10,13 +10,13 @@ import (
 // urlencode joins parameters from map[string]string with ampersand (&), and
 // also escapes their values
 func urlencode(params map[string]string) string {
-	arr := make([]string, len(params))
+	arr := make([]string, 0)
 	for k, v := range params {
 		if fmt.Sprintf("%s", v) != "" {
 			arr = append(arr, fmt.Sprintf("%s=%s", k, url.QueryEscape(v)))
 		}
 	}
-	return strings.Join(arr, "&")
+	return strings.Join(arr, "&") + "&"
 }
 
 // MapStruct converts struct to map[string]string, using fields' names as keys
@@ -30,13 +30,17 @@ func MapStruct(s interface{}) map[string]string {
 func mapStructNested(s interface{}, baseName string) map[string]string {
 	result := make(map[string]string)
 	// Is s a pointer? We don't want any of those here
-	if reflect.TypeOf(s).Kind() == reflect.Ptr {
-		s = reflect.TypeOf(s).Elem()
+	for reflect.TypeOf(s).Kind() == reflect.Ptr {
+		s = reflect.ValueOf(s).Elem().Interface()
 	}
 	fields := reflect.TypeOf(s).NumField()
 	for i := 0; i < fields; i++ {
 		t := reflect.TypeOf(s).Field(i)
 		v := reflect.ValueOf(s).Field(i)
+		// Do we even need to parse this field?
+		if t.Tag.Get("dontMap") == "true" {
+			continue
+		}
 		// Name is important
 		var name string
 		if json := t.Tag.Get("json"); json != "" {

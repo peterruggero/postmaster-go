@@ -1,14 +1,14 @@
 package postmaster
 
-import ( 
-	"fmt"
+import (
 	"errors"
+	"fmt"
 )
 
 // Shipment "object"
 type Shipment struct {
-	p       *Postmaster
-	Id      int
+	p       *Postmaster `dontMap:"true"`
+	Id      int         `dontMap:"true"`
 	To      Address
 	From    Address
 	Package Package
@@ -16,11 +16,37 @@ type Shipment struct {
 	Service string
 }
 
+type ShipmentResponse struct {
+	Id           int
+	To           Address
+	From         Address
+	Package      Package
+	Carrier      string
+	Service      string
+	Status       string
+	Tracking     []string
+	PackageCount int `json:"package_count"`
+	CreatedAt    int `json:"created_at"`
+	Cost         int
+	Packages     []Package
+	Prepaid      bool
+}
+
 func (p *Postmaster) Shipment() (s *Shipment) {
 	s = new(Shipment)
 	s.p = p
 	s.Id = -1 // default for "null" Shipment
 	return
+}
+
+func (s *Shipment) Create() (*ShipmentResponse, error) {
+	if s.Id != -1 {
+		return nil, errors.New("You can't create an existing shipment.")
+	}
+	params := MapStruct(s)
+	res := ShipmentResponse{}
+	_, err := s.p.Post("v1", "shipments", params, &res)
+	return &res, err
 }
 
 func (s *Shipment) Void() (bool, error) {
