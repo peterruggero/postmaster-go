@@ -7,12 +7,18 @@ type RateResponse struct {
 	Currency string // Currency
 }
 
-// RateResponseBest is being returned if Carrier is empty.
-type RateResponseBest struct {
+// rateResponseBestTemp is temporary, as name indicates.
+type rateResponseBestTemp struct {
 	Fedex RateResponse // Rate for Fedex
 	UPS   RateResponse // Rate for UPS
 	USPS  RateResponse // Rate for USPS
 	Best  string       // Lowercase carrier name that offers the best deal
+}
+
+// RateResponseBest is being returned if Carrier is empty.
+type RateResponseBest struct {
+	Rates map[string]RateResponse
+	Best  string // Lowercase carrier name that offers the best deal
 }
 
 // RateMessage is being used in query to find delivery rates for single package.
@@ -37,8 +43,15 @@ func (p *Postmaster) Rate(r *RateMessage) (interface{}, error) {
 		_, err := p.post("v1", "rates", params, &res)
 		return res, err
 	} else {
-		res := RateResponseBest{}
-		_, err := p.post("v1", "rates", params, &res)
+		resTemp := rateResponseBestTemp{}
+		_, err := p.post("v1", "rates", params, &resTemp)
+		res := RateResponseBest{
+			Rates: make(map[string]RateResponse),
+			Best:  resTemp.Best,
+		}
+		res.Rates["fedex"] = resTemp.Fedex
+		res.Rates["ups"] = resTemp.UPS
+		res.Rates["usps"] = resTemp.USPS
 		return res, err
 	}
 }

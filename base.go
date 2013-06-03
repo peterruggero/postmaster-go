@@ -4,6 +4,7 @@ import (
 	"github.com/jmcvetta/restclient"
 	"net/http"
 	"net/url"
+	"fmt"
 )
 
 type PostmasterError struct {
@@ -30,7 +31,7 @@ func New(key string) *Postmaster {
 	userinfo := url.UserPassword(key, "")
 	header := http.Header{
 		"Content-Type": []string{"application/x-www-form-urlencoded"},
-		"User-Agent":   []string{"Postmaster/1.0 Go"},
+		"User-Agent":   []string{fmt.Sprintf("Postmaster/%.1f Go", VERSION)},
 	}
 	return &Postmaster{
 		ApiKey:   key,

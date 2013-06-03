@@ -56,7 +56,7 @@ type Custom struct {
 	Type          string
 	Comments      string
 	InvoiceNumber string `json:"invoice_number"`
-	Contents      []CustomContent
+	Contents      CustomContent
 }
 
 // Shipment creates a brand new Shipment structure. Don't use new(postmaster.Shipment),

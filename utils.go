@@ -59,9 +59,12 @@ func mapStructNested(s interface{}, baseName string) map[string]string {
 			}
 		} else { // Not nested
 			value := fmt.Sprintf("%v", v.Interface())
-			if value != "" {
-				result[name] = value
+			// Omit all zeros
+			k := v.Kind()
+			if (k == reflect.Float32 || k == reflect.Int) && value == "0" || value == "" {
+				continue
 			}
+			result[name] = value
 		}
 	}
 	return result

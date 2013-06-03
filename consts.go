@@ -1,5 +1,7 @@
 package postmaster
 
+var VERSION float32 = 1.0
+
 // SERVICE_LEVELS unifies different carriers' service levels, for example:
 // Fedex's "Standard Overnight", UPS' "Next Day Air Saver" and USPS' "Express"
 // all become our's "1DAY".
