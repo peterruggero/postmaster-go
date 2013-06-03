@@ -4,7 +4,8 @@ import (
 	"github.com/jmcvetta/restclient"
 )
 
-func (p *Postmaster) Get(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
+// Get makes a HTTP GET request. Parameters must be provided in params.
+func (p *Postmaster) get(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),
@@ -22,7 +23,9 @@ func (p *Postmaster) Get(version string, endpoint string, params restclient.Para
 	return
 }
 
-func (p *Postmaster) Put(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
+// Put makes a HTTP PUT request. Parameters must be provided in params, and will
+// be translated into query string.
+func (p *Postmaster) put(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),
@@ -40,7 +43,9 @@ func (p *Postmaster) Put(version string, endpoint string, params restclient.Para
 	return
 }
 
-func (p *Postmaster) Post(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
+// Post makes a HTTP POST request. Parameters must be provided in params, and will
+// be translated into query string.
+func (p *Postmaster) post(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),
@@ -58,12 +63,15 @@ func (p *Postmaster) Post(version string, endpoint string, params restclient.Par
 	return
 }
 
-func (p *Postmaster) Delete(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
+// Delete makes a HTTP DELETE request. Parameters must be provided in params, and will
+// be translated into query string.
+func (p *Postmaster) del(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),
 		Userinfo: p.Userinfo,
 		Method:   "DELETE",
+		Data:     urlencode(params),
 		Result:   result,
 		Error:    &err,
 		Header:   p.Headers,

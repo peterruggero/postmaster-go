@@ -1,5 +1,9 @@
 package postmaster
 
+// SERVICE_LEVELS unifies different carriers' service levels, for example:
+// Fedex's "Standard Overnight", UPS' "Next Day Air Saver" and USPS' "Express"
+// all become our's "1DAY".
+// For reference, see http://postmaster.io/docs#services
 var SERVICE_LEVELS []string = []string{
 	"GROUND",
 	"3DAY",
@@ -13,6 +17,9 @@ var SERVICE_LEVELS []string = []string{
 	"INTL_EXPRESS",
 }
 
+// PACKAGE_TYPES unifies different carriers' packages terminology, for example:
+// "Fedex Envelope", "UPS Letter" and "Legal Envelopes" all become "LETTER".
+// For reference, see http://postmaster.io/docs#packages
 var PACKAGE_TYPES []string = []string{
 	"TUBE",
 	"LETTER",

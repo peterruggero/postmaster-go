@@ -1,5 +1,7 @@
 package postmaster
 
+// Address is used in Shipment requests (as From or To fields), or in validating
+// addresses
 type Address struct {
 	Company    string
 	Contact    string
@@ -19,14 +21,16 @@ type Address struct {
 	Residental bool   `dontMap:"true"`
 }
 
+// AddressResponse is being sent back from API
 type AddressResponse struct {
 	Status    string
 	Addresses []Address
 }
 
+// Validate tries to validate given address in API
 func (p *Postmaster) Validate(addr Address) (*AddressResponse, error) {
-	params := MapStruct(addr)
+	params := mapStruct(addr)
 	res := AddressResponse{}
-	_, err := p.Post("v1", "validate", params, &res)
+	_, err := p.post("v1", "validate", params, &res)
 	return &res, err
 }

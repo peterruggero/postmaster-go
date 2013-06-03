@@ -14,6 +14,7 @@ func (e *PostmasterError) Error() string {
 	return e.Message
 }
 
+// Postmaster is base library structure. Don't use it, invoke New() instead. 
 type Postmaster struct {
 	ApiKey   string
 	BaseUrl  string
@@ -22,6 +23,7 @@ type Postmaster struct {
 	Headers  *http.Header
 }
 
+// New returns freshly squeezed Postmaster object with all dependants initialized.
 func New(key string) *Postmaster {
 	client := restclient.New()
 	client.UnsafeBasicAuth = true

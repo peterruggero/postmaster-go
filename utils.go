@@ -22,7 +22,7 @@ func urlencode(params map[string]string) string {
 // MapStruct converts struct to map[string]string, using fields' names as keys
 // and fields' values as values.
 // It also automagically converts any nested structures.
-func MapStruct(s interface{}) map[string]string {
+func mapStruct(s interface{}) map[string]string {
 	return mapStructNested(s, "")
 }
 
