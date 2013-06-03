@@ -218,7 +218,7 @@ Usage:
 There might be two possible responses, depending on whether `Carrier` was provided in `RateMessage`:
 
 - `Carrier` was provided: `RateResponse`,
-- `Carrier` was not provided: `RateResponseBest`, containing single `RateResponse` for each carrier.
+- `Carrier` was not provided: `RateResponseBest`, containing `map[string]RateResponse` for each carrier.
 
 
 ### Shipment Times ([documentation](https://www.postmaster.io/docs#get_time))
