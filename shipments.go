@@ -16,6 +16,19 @@ type Shipment struct {
 	Service string
 }
 
+type Package struct {
+	Id          int         `dontMap:"true"`
+	Name        string
+	Width       float32
+	Height      float32
+	Length      float32
+	Weight      float32
+	DimensionUnits   string `dontMap:"true" json:"dimension_units"`
+	WeightUnits string `dontMap:"true" json:"weight_units"`
+	Type        string `dontMap:"true"`
+	LabelUrl    string `dontMap:"true" json:"label_url"`
+}
+
 type ShipmentResponse struct {
 	Id           int
 	To           Address
