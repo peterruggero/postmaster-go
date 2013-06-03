@@ -19,10 +19,10 @@ type TrackingHistory struct {
 }
 
 // TrackingResponse is being sent back from API when tracking shipment and
-// tracking shipment by its reference number. 
+// tracking shipment by its reference number.
 type TrackingResponse struct {
 	Status     string
-	LastUpdate int `json:"last_update"`
+	LastUpdate int    `json:"last_update"`
 	SignedBy   string `json:"signed_by"`
 	History    []TrackingHistory
 }

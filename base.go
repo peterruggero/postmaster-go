@@ -14,7 +14,7 @@ func (e *PostmasterError) Error() string {
 	return e.Message
 }
 
-// Postmaster is base library structure. Don't use it, invoke New() instead. 
+// Postmaster is base library structure. Don't use it, invoke New() instead.
 type Postmaster struct {
 	ApiKey   string
 	BaseUrl  string

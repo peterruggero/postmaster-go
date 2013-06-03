@@ -107,7 +107,7 @@ func (s *Shipment) Void() (bool, error) {
 
 // Track returns TrackingResponse for Shipment.
 // You musn't invoke this function from an "empty" Shipment (i.e. shipment.Id == -1).
-// In order to track shipment just by it's tracking number, use Postmaster.TrackRef()
+// In order to track shipment just by its tracking number, use Postmaster.TrackRef()
 // function.
 func (s *Shipment) Track() (*TrackingResponse, error) {
 	if s.Id == -1 {
