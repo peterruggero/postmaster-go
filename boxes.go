@@ -131,7 +131,7 @@ func (b *Box) Update() (*Box, error) {
 }
 
 // List returns a list of boxes, with limit and cursor (e.g. for pagination).
-func (b *Box) List(limit int, cursor string) (*BoxList, error) {
+func (p *Postmaster) ListBoxes(limit int, cursor string) (*BoxList, error) {
 	params := make(map[string]string)
 	if limit > 0 {
 		params["limit"] = strconv.Itoa(limit)
@@ -140,10 +140,10 @@ func (b *Box) List(limit int, cursor string) (*BoxList, error) {
 		params["cursor"] = cursor
 	}
 	res := new(BoxList)
-	_, err := b.p.get("v1", "packages", params, &res)
+	_, err := p.get("v1", "packages", params, &res)
 	// Set Postmaster "base" object for each package, so we can use API with them
 	for k, _ := range res.Results {
-		res.Results[k].p = b.p
+		res.Results[k].p = p
 	}
 	return res, err
 }
