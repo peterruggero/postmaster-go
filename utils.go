@@ -52,7 +52,10 @@ func mapStructNested(s interface{}, baseName string) map[string]string {
 			name = fmt.Sprintf("%s[%s]", baseName, name)
 		}
 		// I wonder whether this is a nested object
-		if v.Kind() == reflect.Struct { // Nested, activate recursion!
+		if v.Kind() == reflect.Struct || v.Kind() == reflect.Ptr { // Nested, activate recursion!
+			if v.IsNil() {
+				continue
+			}
 			m := mapStructNested(v.Interface(), name)
 			for mk, mv := range m {
 				result[mk] = mv
