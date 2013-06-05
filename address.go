@@ -31,6 +31,6 @@ type AddressResponse struct {
 func (p *Postmaster) Validate(addr *Address) (*AddressResponse, error) {
 	params := mapStruct(addr)
 	res := new(AddressResponse)
-	_, err := p.post("v1", "validate", params, &res)
+	_, err := post(p, "v1", "validate", params, &res)
 	return res, err
 }

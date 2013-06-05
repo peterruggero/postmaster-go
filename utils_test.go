@@ -6,10 +6,10 @@ import (
 
 func TestMakeUrl(t *testing.T) {
 	pm := New("key")
-	if pm.makeUrl("v", "endp") != "http://api.postmaster.io/v/endp" {
+	if pm.makeUrl("v", "endp") != "https://api.postmaster.io/v/endp" {
 		t.Error("wrong url for default BaseUrl")
 	}
-	pm.BaseUrl = "something"
+	pm.SetBaseUrl("something")
 	if pm.makeUrl("v", "endp") != "something/v/endp" {
 		t.Error("wrong url for custom BaseUrl")
 	}

@@ -84,7 +84,7 @@ func (b *Box) Create() (*Box, error) {
 	}
 	params := mapStruct(b)
 	res := map[string]int{}
-	_, err := b.p.post("v1", "packages", params, &res)
+	_, err := post(b.p, "v1", "packages", params, &res)
 	if err == nil {
 		b.Id = res["id"]
 	}
@@ -98,7 +98,7 @@ func (b *Box) Get() (*Box, error) {
 		return nil, errors.New("You must provide a box ID.")
 	}
 	endpoint := fmt.Sprintf("packages/%d", b.Id)
-	_, err := b.p.get("v1", endpoint, nil, b)
+	_, err := get(b.p, "v1", endpoint, nil, b)
 	return b, err
 }
 
@@ -110,7 +110,7 @@ func (b *Box) Delete() (*Box, error) {
 	}
 	endpoint := fmt.Sprintf("packages/%d", b.Id)
 	res := map[string]string{}
-	_, err := b.p.del("v1", endpoint, nil, &res)
+	_, err := del(b.p, "v1", endpoint, nil, &res)
 	b = b.p.Box()
 	return b, err
 }
@@ -124,7 +124,7 @@ func (b *Box) Update() (*Box, error) {
 	endpoint := fmt.Sprintf("packages/%d", b.Id)
 	params := mapStruct(b)
 	res := map[string]string{}
-	_, err := b.p.put("v1", endpoint, params, &res)
+	_, err := put(b.p, "v1", endpoint, params, &res)
 	return b, err
 }
 
@@ -138,7 +138,7 @@ func (p *Postmaster) ListBoxes(limit int, cursor string) (*BoxList, error) {
 		params["cursor"] = cursor
 	}
 	res := new(BoxList)
-	_, err := p.get("v1", "packages", params, &res)
+	_, err := get(p, "v1", "packages", params, &res)
 	// Set Postmaster "base" object for each package, so we can use API with them
 	for k, _ := range res.Results {
 		res.Results[k].p = p
@@ -156,6 +156,6 @@ func (p *Postmaster) Fit(boxes []Box, items []Item, limit int) (*FitResponse, er
 		PackageLimit: limit,
 	}
 	res := new(FitResponse)
-	_, err := p.postJson("v1", "packages/fit", params, &res)
+	_, err := postJson(p, "v1", "packages/fit", params, &res)
 	return res, err
 }

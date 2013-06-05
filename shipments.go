@@ -74,7 +74,7 @@ func (s *Shipment) Create() (*Shipment, error) {
 		return nil, errors.New("You can't create an existing shipment.")
 	}
 	params := mapStruct(s)
-	_, err := s.p.post("v1", "shipments", params, s)
+	_, err := post(s.p, "v1", "shipments", params, s)
 	return s, err
 }
 
@@ -85,7 +85,7 @@ func (s *Shipment) Get() (*Shipment, error) {
 		return nil, errors.New("You must provide a shipment ID.")
 	}
 	endpoint := fmt.Sprintf("shipments/%d", s.Id)
-	_, err := s.p.get("v1", endpoint, nil, s)
+	_, err := get(s.p, "v1", endpoint, nil, s)
 	return s, err
 }
 
@@ -97,7 +97,7 @@ func (s *Shipment) Void() (bool, error) {
 	}
 	endpoint := fmt.Sprintf("shipments/%d/void", s.Id)
 	var res map[string]string
-	_, err := s.p.del("v1", endpoint, nil, &res)
+	_, err := del(s.p, "v1", endpoint, nil, &res)
 	if res["message"] == "OK" {
 		s.Status = "Voided"
 	}
@@ -114,6 +114,6 @@ func (s *Shipment) Track() (*TrackingResponse, error) {
 	}
 	endpoint := fmt.Sprintf("shipments/%d/track", s.Id)
 	res := TrackingResponse{}
-	_, err := s.p.get("v1", endpoint, nil, &res)
+	_, err := get(s.p, "v1", endpoint, nil, &res)
 	return &res, err
 }

@@ -6,7 +6,7 @@ import (
 )
 
 // get makes a HTTP GET request. Parameters must be provided in params.
-func (p *Postmaster) get(version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
+var get = func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),
@@ -26,7 +26,7 @@ func (p *Postmaster) get(version string, endpoint string, params map[string]stri
 
 // put makes a HTTP PUT request. Parameters must be provided in params, and will
 // be translated into query string.
-func (p *Postmaster) put(version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
+var put = func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),
@@ -46,7 +46,7 @@ func (p *Postmaster) put(version string, endpoint string, params map[string]stri
 
 // post makes a HTTP POST request. Parameters must be provided in params, and will
 // be translated into query string.
-func (p *Postmaster) post(version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
+var post = func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),
@@ -68,7 +68,7 @@ func (p *Postmaster) post(version string, endpoint string, params map[string]str
 // Currently the only function that utilizes this is *postmaster.Fit(), but it may change in future.
 // Remember that every field of params structure must have a "json" comment, or json.Marshal will
 // use its tentacles to make bad things to your data!
-func (p *Postmaster) postJson(version string, endpoint string, params interface{}, result interface{}) (status int, e error) {
+var postJson = func(p *Postmaster, version string, endpoint string, params interface{}, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	headers := make(http.Header)
 	for k, v := range *p.headers {
@@ -93,7 +93,7 @@ func (p *Postmaster) postJson(version string, endpoint string, params interface{
 
 // delete makes a HTTP DELETE request. Parameters must be provided in params, and will
 // be translated into query string.
-func (p *Postmaster) del(version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
+var del = func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),

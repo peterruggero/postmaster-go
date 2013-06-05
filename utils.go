@@ -83,3 +83,21 @@ func (p *Postmaster) makeUrl(version string, endpoint string) string {
 	}
 	return fmt.Sprintf("%s/%s/%s", url, version, endpoint)
 }
+
+// restMockObj is being sent to test case via a buffered channel to make sure
+// REST function was called with proper arguments.
+type restMockObj struct {
+	version  string
+	endpoint string
+	params   map[string]string
+}
+
+// restMock replaces function from rest.go file and just returns given object.
+// It communicates with test case via a buffered channel.
+func restMock(c chan *restMockObj, mocked interface{}, s int, err error) func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
+	return func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
+		result = mocked
+		c <- &restMockObj{version: version, endpoint: endpoint, params: params}
+		return s, err
+	}
+}
