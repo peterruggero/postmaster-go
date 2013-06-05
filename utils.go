@@ -53,7 +53,7 @@ func mapStructNested(s interface{}, baseName string) map[string]string {
 		}
 		// I wonder whether this is a nested object
 		if v.Kind() == reflect.Struct || v.Kind() == reflect.Ptr { // Nested, activate recursion!
-			if v.IsNil() {
+			if v.Kind() == reflect.Ptr && v.IsNil() {
 				continue
 			}
 			m := mapStructNested(v.Interface(), name)

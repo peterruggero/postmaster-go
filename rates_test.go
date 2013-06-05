@@ -23,12 +23,12 @@ func TestRate(t *testing.T) {
 		t.Error("wrong version")
 	}
 	if reflect.TypeOf(tr) != reflect.TypeOf(new(RateResponse)) {
-		t.Error("wrong response for non-empty carrier")
+		t.Error("wrong response type for non-empty carrier")
 	}
 	// Empty carrier
 	r.Carrier = ""
 	tr, _ = pm.Rate(r)
 	if reflect.TypeOf(tr) != reflect.TypeOf(new(RateResponseBest)) {
-		t.Error("wrong response for empty carrier")
+		t.Error("wrong response type for empty carrier")
 	}
 }
