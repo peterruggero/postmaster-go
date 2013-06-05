@@ -54,6 +54,11 @@ Every function returns base object (which usually is some structure) and an erro
 	}
 
 
+### Testing
+
+You can run tests by executing `go test` command.
+
+
 ## Usage
 
 Refer to Postmaster.io API documentation to see which fields are required.  
