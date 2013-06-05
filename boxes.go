@@ -128,7 +128,7 @@ func (b *Box) Update() (*Box, error) {
 	return b, err
 }
 
-// List returns a list of boxes, with limit and cursor (e.g. for pagination).
+// ListBoxes returns a list of boxes, with limit and cursor (e.g. for pagination).
 func (p *Postmaster) ListBoxes(limit int, cursor string) (*BoxList, error) {
 	params := make(map[string]string)
 	if limit > 0 {

@@ -93,6 +93,18 @@ Don't use `new(postmaster.Shipment)`, use `ship := pm.Shipment()` instead. This 
 **Note**: you can't get the shipment unless it has ID > -1.  
 
 
+#### List shipments
+
+	ships, err := pm.ListShipments(10, "", "Delivered")
+
+
+#### Find shipments
+
+	ships, err := pm.FindShipments("texas", 10, "")
+
+**Note**: you must provide search query.
+
+
 #### Void ([documentation](https://www.postmaster.io/docs#cancel))
 
 	ship := pm.Shipment()
