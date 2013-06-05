@@ -8,7 +8,7 @@ import (
 )
 
 // urlencode joins parameters from map[string]string with ampersand (&), and
-// also escapes their values
+// also escapes their values.
 func urlencode(params map[string]string) string {
 	arr := make([]string, 0)
 	for k, v := range params {
@@ -19,7 +19,7 @@ func urlencode(params map[string]string) string {
 	return "&" + strings.Join(arr, "&") + "&"
 }
 
-// MapStruct converts struct to map[string]string, using fields' names as keys
+// mapStruct converts struct to map[string]string, using fields' names as keys
 // and fields' values as values.
 // It also automagically converts any nested structures.
 func mapStruct(s interface{}) map[string]string {
@@ -76,10 +76,10 @@ func mapStructNested(s interface{}, baseName string) map[string]string {
 // makeUrl creates full URL from baseUrl, version and endpoint.
 func (p *Postmaster) makeUrl(version string, endpoint string) string {
 	var url string
-	if p.BaseUrl != "" {
-		url = p.BaseUrl
+	if p.baseUrl != "" {
+		url = p.baseUrl
 	} else {
-		url = "http://api.postmaster.io"
+		url = "https://api.postmaster.io"
 	}
 	return fmt.Sprintf("%s/%s/%s", url, version, endpoint)
 }

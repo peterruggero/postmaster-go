@@ -20,7 +20,6 @@ type Shipment struct {
 	CreatedAt    int      `json:"created_at"`
 	Cost         int      `dontMap:"true"`
 	Prepaid      bool     `dontMap:"true"`
-	//	Packages     []Package
 }
 
 // Package (not to be confused with packages in fitting API, which are called "Boxes")
