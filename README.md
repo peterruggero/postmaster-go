@@ -39,7 +39,7 @@ We assume that `pm` is your initialized Postmaster object.
 
 If case you'd want to change API's base URL:
 
-	pm.BaseUrl = "http://some.url.com"
+	pm.SetBaseUrl("http://some.url.com")
 
 
 ### Errors
