@@ -4,6 +4,17 @@ import (
 	"testing"
 )
 
+func TestShipmentNew(t *testing.T) {
+	pm := New("apikey")
+	s := pm.Shipment()
+	if s.Id != -1 {
+		t.Error("new shipment should have ID = -1")
+	}
+	if s.p != pm {
+		t.Error("new shipment should have Postmaster instance initialized")
+	}
+}
+
 func TestShipmentCreate(t *testing.T) {
 	// Mock
 	c := make(chan *restMockObj, 1)
