@@ -6,7 +6,7 @@ import (
 )
 
 // get makes a HTTP GET request. Parameters must be provided in params.
-func (p *Postmaster) get(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
+func (p *Postmaster) get(version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),
@@ -26,7 +26,7 @@ func (p *Postmaster) get(version string, endpoint string, params restclient.Para
 
 // put makes a HTTP PUT request. Parameters must be provided in params, and will
 // be translated into query string.
-func (p *Postmaster) put(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
+func (p *Postmaster) put(version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),
@@ -46,7 +46,7 @@ func (p *Postmaster) put(version string, endpoint string, params restclient.Para
 
 // post makes a HTTP POST request. Parameters must be provided in params, and will
 // be translated into query string.
-func (p *Postmaster) post(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
+func (p *Postmaster) post(version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),
@@ -93,7 +93,7 @@ func (p *Postmaster) postJson(version string, endpoint string, params interface{
 
 // delete makes a HTTP DELETE request. Parameters must be provided in params, and will
 // be translated into query string.
-func (p *Postmaster) del(version string, endpoint string, params restclient.Params, result interface{}) (status int, e error) {
+func (p *Postmaster) del(version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
 	err := new(PostmasterError)
 	rr := restclient.RequestResponse{
 		Url:      p.makeUrl(version, endpoint),

@@ -28,9 +28,9 @@ type AddressResponse struct {
 }
 
 // Validate tries to validate given address.
-func (p *Postmaster) Validate(addr Address) (*AddressResponse, error) {
+func (p *Postmaster) Validate(addr *Address) (*AddressResponse, error) {
 	params := mapStruct(addr)
-	res := AddressResponse{}
+	res := new(AddressResponse)
 	_, err := p.post("v1", "validate", params, &res)
-	return &res, err
+	return res, err
 }

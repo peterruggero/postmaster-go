@@ -41,7 +41,7 @@ func (p *Postmaster) Rate(r *RateMessage) (interface{}, error) {
 	if r.Carrier != "" {
 		res := RateResponse{}
 		_, err := p.post("v1", "rates", params, &res)
-		return res, err
+		return &res, err
 	} else {
 		resTemp := rateResponseBestTemp{}
 		_, err := p.post("v1", "rates", params, &resTemp)
@@ -52,6 +52,6 @@ func (p *Postmaster) Rate(r *RateMessage) (interface{}, error) {
 		res.Rates["fedex"] = resTemp.Fedex
 		res.Rates["ups"] = resTemp.UPS
 		res.Rates["usps"] = resTemp.USPS
-		return res, err
+		return &res, err
 	}
 }
