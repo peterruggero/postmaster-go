@@ -6,12 +6,13 @@ import (
 	"strconv"
 )
 
-// Box (other name: Package; used Box here in order not to confuse with Shipment's Package)
-// is a container that we try to fit Items into.
 // Reason why this structure is wholly JSON-mapped (every field has a "json" comment)
 // is that fitting package request is the only request that sends data using JSON
 // and not query params. Thus, we can't use our mapStruct, but must use json package
 // and its Marshal function.
+
+// Box (other name: Package; used Box here in order not to confuse with Shipment's Package)
+// is a container that we try to fit Items into.
 type Box struct {
 	p           *Postmaster `json:"-" dontMap:"true"`
 	Id          int         `json:"-" dontMap:"true"`
@@ -25,10 +26,6 @@ type Box struct {
 }
 
 // Item is an object we try to fit into Boxes.
-// Reason why this structure is wholly JSON-mapped (every field has a "json" comment)
-// is that fitting package request is the only request that sends data using JSON
-// and not query params. Thus, we can't use our mapStruct, but must use json package
-// and its Marshal function.
 type Item struct {
 	SKU         string  `json:"sku"`
 	Name        string  `json:"name,omitempty"`
@@ -48,11 +45,12 @@ type BoxList struct {
 	PreviousCursor string `json:"previous_cursor"`
 }
 
-// FitMessage is being sent to API in order to check whether given items fit given boxes.
 // Reason why this structure is wholly JSON-mapped (every field has a "json" comment)
 // is that fitting package request is the only request that sends data using JSON
 // and not query params. Thus, we can't use our mapStruct, but must use json package
 // and its Marshal function.
+
+// FitMessage is being sent to API in order to check whether given items fit given boxes.
 type FitMessage struct {
 	Boxes        []Box  `json:"boxes"`
 	Items        []Item `json:"items"`
@@ -86,7 +84,7 @@ func (b *Box) Create() (*Box, error) {
 	}
 	params := mapStruct(b)
 	res := map[string]int{}
-	_, err := b.p.post("v1", "packages", params, &res)
+	_, err := post(b.p, "v1", "packages", params, &res)
 	if err == nil {
 		b.Id = res["id"]
 	}
@@ -100,7 +98,7 @@ func (b *Box) Get() (*Box, error) {
 		return nil, errors.New("You must provide a box ID.")
 	}
 	endpoint := fmt.Sprintf("packages/%d", b.Id)
-	_, err := b.p.get("v1", endpoint, nil, b)
+	_, err := get(b.p, "v1", endpoint, nil, b)
 	return b, err
 }
 
@@ -112,7 +110,7 @@ func (b *Box) Delete() (*Box, error) {
 	}
 	endpoint := fmt.Sprintf("packages/%d", b.Id)
 	res := map[string]string{}
-	_, err := b.p.del("v1", endpoint, nil, &res)
+	_, err := del(b.p, "v1", endpoint, nil, &res)
 	b = b.p.Box()
 	return b, err
 }
@@ -126,11 +124,11 @@ func (b *Box) Update() (*Box, error) {
 	endpoint := fmt.Sprintf("packages/%d", b.Id)
 	params := mapStruct(b)
 	res := map[string]string{}
-	_, err := b.p.put("v1", endpoint, params, &res)
+	_, err := put(b.p, "v1", endpoint, params, &res)
 	return b, err
 }
 
-// List returns a list of boxes, with limit and cursor (e.g. for pagination).
+// ListBoxes returns a list of boxes, with limit and cursor (e.g. for pagination).
 func (p *Postmaster) ListBoxes(limit int, cursor string) (*BoxList, error) {
 	params := make(map[string]string)
 	if limit > 0 {
@@ -140,7 +138,7 @@ func (p *Postmaster) ListBoxes(limit int, cursor string) (*BoxList, error) {
 		params["cursor"] = cursor
 	}
 	res := new(BoxList)
-	_, err := p.get("v1", "packages", params, &res)
+	_, err := get(p, "v1", "packages", params, &res)
 	// Set Postmaster "base" object for each package, so we can use API with them
 	for k, _ := range res.Results {
 		res.Results[k].p = p
@@ -149,14 +147,15 @@ func (p *Postmaster) ListBoxes(limit int, cursor string) (*BoxList, error) {
 }
 
 // Fit checks if given items can be packed into given boxes.
-// Currently this is the only function that utilizes postJson function.
 func (p *Postmaster) Fit(boxes []Box, items []Item, limit int) (*FitResponse, error) {
+	// Currently this is the only function that utilizes postJson function, as fitting
+	// items into boxes is the only API call that accepts JSON object.
 	params := FitMessage{
 		Boxes:        boxes,
 		Items:        items,
 		PackageLimit: limit,
 	}
 	res := new(FitResponse)
-	_, err := p.postJson("v1", "packages/fit", params, &res)
+	_, err := postJson(p, "v1", "packages/fit", params, &res)
 	return res, err
 }

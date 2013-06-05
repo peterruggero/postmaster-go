@@ -8,7 +8,7 @@ import (
 )
 
 // urlencode joins parameters from map[string]string with ampersand (&), and
-// also escapes their values
+// also escapes their values.
 func urlencode(params map[string]string) string {
 	arr := make([]string, 0)
 	for k, v := range params {
@@ -19,7 +19,7 @@ func urlencode(params map[string]string) string {
 	return "&" + strings.Join(arr, "&") + "&"
 }
 
-// MapStruct converts struct to map[string]string, using fields' names as keys
+// mapStruct converts struct to map[string]string, using fields' names as keys
 // and fields' values as values.
 // It also automagically converts any nested structures.
 func mapStruct(s interface{}) map[string]string {
@@ -52,7 +52,10 @@ func mapStructNested(s interface{}, baseName string) map[string]string {
 			name = fmt.Sprintf("%s[%s]", baseName, name)
 		}
 		// I wonder whether this is a nested object
-		if v.Kind() == reflect.Struct { // Nested, activate recursion!
+		if v.Kind() == reflect.Struct || v.Kind() == reflect.Ptr { // Nested, activate recursion!
+			if v.Kind() == reflect.Ptr && v.IsNil() {
+				continue
+			}
 			m := mapStructNested(v.Interface(), name)
 			for mk, mv := range m {
 				result[mk] = mv
@@ -73,10 +76,39 @@ func mapStructNested(s interface{}, baseName string) map[string]string {
 // makeUrl creates full URL from baseUrl, version and endpoint.
 func (p *Postmaster) makeUrl(version string, endpoint string) string {
 	var url string
-	if p.BaseUrl != "" {
-		url = p.BaseUrl
+	if p.baseUrl != "" {
+		url = p.baseUrl
 	} else {
-		url = "http://api.postmaster.io"
+		url = "https://api.postmaster.io"
 	}
 	return fmt.Sprintf("%s/%s/%s", url, version, endpoint)
+}
+
+// restMockObj is being sent to test case via a buffered channel to make sure
+// REST function was called with proper arguments.
+type restMockObj struct {
+	version    string
+	endpoint   string
+	params     map[string]string
+	paramsJson interface{}
+}
+
+// restMock replaces function from rest.go file and just returns given object.
+// It communicates with test case via a buffered channel.
+func restMock(c chan *restMockObj, mocked interface{}, s int, err error) func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
+	return func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
+		result = mocked
+		c <- &restMockObj{version: version, endpoint: endpoint, params: params}
+		return s, err
+	}
+}
+
+// restMock replaces JSON function from rest.go file and just returns given object.
+// It communicates with test case via a buffered channel.
+func restMockJson(c chan *restMockObj, mocked interface{}, s int, err error) func(p *Postmaster, version string, endpoint string, params interface{}, result interface{}) (status int, e error) {
+	return func(p *Postmaster, version string, endpoint string, params interface{}, result interface{}) (status int, e error) {
+		result = mocked
+		c <- &restMockObj{version: version, endpoint: endpoint, paramsJson: params}
+		return s, err
+	}
 }

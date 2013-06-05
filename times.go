@@ -22,9 +22,9 @@ type TimeMessage struct {
 }
 
 // Time asks API for time to transport a shipment between two ZIP codes.
-func (p *Postmaster) Time(t TimeMessage) (*TimeResponse, error) {
+func (p *Postmaster) Time(t *TimeMessage) (*TimeResponse, error) {
 	params := mapStruct(t)
 	res := TimeResponse{}
-	_, err := p.post("v1", "times", params, &res)
+	_, err := post(p, "v1", "times", params, &res)
 	return &res, err
 }

@@ -33,6 +33,6 @@ func (p *Postmaster) TrackRef(trackingNumber string) (*TrackingResponse, error) 
 		"tracking": trackingNumber,
 	}
 	res := TrackingResponse{}
-	_, err := p.get("v1", "track", params, &res)
+	_, err := get(p, "v1", "track", params, &res)
 	return &res, err
 }
