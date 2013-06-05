@@ -40,11 +40,11 @@ func (p *Postmaster) Rate(r *RateMessage) (interface{}, error) {
 	params := mapStruct(r)
 	if r.Carrier != "" {
 		res := RateResponse{}
-		_, err := p.post("v1", "rates", params, &res)
-		return res, err
+		_, err := post(p, "v1", "rates", params, &res)
+		return &res, err
 	} else {
 		resTemp := rateResponseBestTemp{}
-		_, err := p.post("v1", "rates", params, &resTemp)
+		_, err := post(p, "v1", "rates", params, &resTemp)
 		res := RateResponseBest{
 			Rates: make(map[string]RateResponse),
 			Best:  resTemp.Best,
@@ -52,6 +52,6 @@ func (p *Postmaster) Rate(r *RateMessage) (interface{}, error) {
 		res.Rates["fedex"] = resTemp.Fedex
 		res.Rates["ups"] = resTemp.UPS
 		res.Rates["usps"] = resTemp.USPS
-		return res, err
+		return &res, err
 	}
 }

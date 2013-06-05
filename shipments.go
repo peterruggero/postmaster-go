@@ -3,6 +3,7 @@ package postmaster
 import (
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 // Shipment is a base object used in Shipment API requests.
@@ -20,7 +21,13 @@ type Shipment struct {
 	CreatedAt    int      `json:"created_at"`
 	Cost         int      `dontMap:"true"`
 	Prepaid      bool     `dontMap:"true"`
-	//	Packages     []Package
+}
+
+// ShipmentList is returned when asking for list of shipments.
+type ShipmentList struct {
+	Results        []Shipment
+	Cursor         string
+	PreviousCursor string `json:"previous_cursor"`
 }
 
 // Package (not to be confused with packages in fitting API, which are called "Boxes")
@@ -75,7 +82,7 @@ func (s *Shipment) Create() (*Shipment, error) {
 		return nil, errors.New("You can't create an existing shipment.")
 	}
 	params := mapStruct(s)
-	_, err := s.p.post("v1", "shipments", params, s)
+	_, err := post(s.p, "v1", "shipments", params, s)
 	return s, err
 }
 
@@ -86,7 +93,7 @@ func (s *Shipment) Get() (*Shipment, error) {
 		return nil, errors.New("You must provide a shipment ID.")
 	}
 	endpoint := fmt.Sprintf("shipments/%d", s.Id)
-	_, err := s.p.get("v1", endpoint, nil, s)
+	_, err := get(s.p, "v1", endpoint, nil, s)
 	return s, err
 }
 
@@ -98,7 +105,7 @@ func (s *Shipment) Void() (bool, error) {
 	}
 	endpoint := fmt.Sprintf("shipments/%d/void", s.Id)
 	var res map[string]string
-	_, err := s.p.del("v1", endpoint, nil, &res)
+	_, err := del(s.p, "v1", endpoint, nil, &res)
 	if res["message"] == "OK" {
 		s.Status = "Voided"
 	}
@@ -115,6 +122,50 @@ func (s *Shipment) Track() (*TrackingResponse, error) {
 	}
 	endpoint := fmt.Sprintf("shipments/%d/track", s.Id)
 	res := TrackingResponse{}
-	_, err := s.p.get("v1", endpoint, nil, &res)
+	_, err := get(s.p, "v1", endpoint, nil, &res)
 	return &res, err
+}
+
+// ListShipments returns a list of shipments, with limit, status and cursor (e.g. for pagination).
+func (p *Postmaster) ListShipments(limit int, cursor string, status string) (*ShipmentList, error) {
+	params := make(map[string]string)
+	if limit > 0 {
+		params["limit"] = strconv.Itoa(limit)
+	}
+	if cursor != "" {
+		params["cursor"] = cursor
+	}
+	if status != "" {
+		params["status"] = status
+	}
+	res := new(ShipmentList)
+	_, err := get(p, "v1", "shipments", params, &res)
+	// Set Postmaster "base" object for each shipment, so we can use API with them
+	for k, _ := range res.Results {
+		res.Results[k].p = p
+	}
+	return res, err
+}
+
+// FindShipments returns a list of shipments matching given search query, with limit,
+// status and cursor (e.g. for pagination).
+func (p *Postmaster) FindShipments(q string, limit int, cursor string) (*ShipmentList, error) {
+	params := make(map[string]string)
+	if q == "" {
+		return nil, errors.New("You must provide search query.")
+	}
+	params["q"] = q
+	if limit > 0 {
+		params["limit"] = strconv.Itoa(limit)
+	}
+	if cursor != "" {
+		params["cursor"] = cursor
+	}
+	res := new(ShipmentList)
+	_, err := get(p, "v1", "shipments/search", params, &res)
+	// Set Postmaster "base" object for each shipment, so we can use API with them
+	for k, _ := range res.Results {
+		res.Results[k].p = p
+	}
+	return res, err
 }
