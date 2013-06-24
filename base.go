@@ -49,7 +49,7 @@ func New(key string) *Postmaster {
 	client := restclient.New()
 	userinfo := url.UserPassword(key, "")
 	header := http.Header{
-		"Content-Type": []string{"application/x-www-form-urlencoded"},
+		"Content-Type": []string{"application/json"},
 		"User-Agent":   []string{fmt.Sprintf("Postmaster/%.1f Go", VERSION)},
 	}
 	return &Postmaster{

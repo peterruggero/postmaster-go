@@ -8,62 +8,63 @@ import (
 
 // Shipment is a base object used in Shipment API requests.
 type Shipment struct {
-	p            *Postmaster `dontMap:"true"`
-	Id           int         `dontMap:"true"`
-	To           Address
-	From         Address
-	Package      Package
-	Carrier      string
-	Service      string
-	Status       string   `dontMap:"true"`
-	Tracking     []string `dontMap:"true"`
-	PackageCount int      `json:"package_count"`
-	CreatedAt    int      `json:"created_at"`
-	Cost         int      `dontMap:"true"`
-	Prepaid      bool     `dontMap:"true"`
+	p            *Postmaster `json:"-"`
+	Id           int         `json:"id,omitempty"`
+	To           *Address    `json:"to,omitempty"`
+	From         *Address    `json:"from,omitempty"`
+	Package      *Package    `json:"package"`
+	Packages     []Package   `json:"packages"`
+	Carrier      string      `json:"carrier"`
+	Service      string      `json:"service"`
+	Status       string      `json:"status,omitempty"`
+	Tracking     []string    `json:"tracking,omitempty"`
+	PackageCount int         `json:"package_count,omitempty"`
+	CreatedAt    int         `json:"created_at,omitempty"`
+	Cost         int         `json:"cost,omitempty"`
+	Prepaid      bool        `json:"prepaid,omitempty"`
 }
 
 // ShipmentList is returned when asking for list of shipments.
 type ShipmentList struct {
-	Results        []Shipment
-	Cursor         string
-	PreviousCursor string `json:"previous_cursor"`
+	Results        []Shipment `json:"results"`
+	Cursor         string     `json:"cursor,omitempty"`
+	PreviousCursor string     `json:"previous_cursor,omitempty"`
 }
 
 // Package (not to be confused with packages in fitting API, which are called "Boxes")
 // is being used in Shipment request.
 type Package struct {
-	Id             int `dontMap:"true"`
-	Name           string
-	Width          float32
-	Height         float32
-	Length         float32
-	Weight         float32
-	Customs        Custom
-	DimensionUnits string `dontMap:"true" json:"dimension_units"`
-	WeightUnits    string `dontMap:"true" json:"weight_units"`
-	Type           string `dontMap:"true"`
-	LabelUrl       string `dontMap:"true" json:"label_url"`
+	Id             int     `json:"id,omitempty"`
+	Name           string  `json:"name,omitempty"`
+	Width          float32 `json:"width,omitempty"`
+	Height         float32 `json:"height,omitempty"`
+	Length         float32 `json:"length,omitempty"`
+	Weight         float32 `json:"weight,omitempty"`
+	Customs        *Custom `json:"customs,omitempty"`
+	DimensionUnits string  `json:"dimension_units,omitempty"`
+	WeightUnits    string  `json:"weight_units,omitempty"`
+	Type           string  `json:"type,omitempty"`
+	LabelUrl       string  `json:"label_url,omitempty"`
 }
 
 // CustomContent is being used as a single item in Custom object.
 type CustomContent struct {
-	Description     string
-	Quantity        string
-	Value           string
-	Weight          float32
-	WeightUnits     string `json:"weight_units"`
-	HSTariffNumber  string `json:"hs_tariff_number"`
-	CountryOfOrigin string `json:"country_of_origin"`
+	Description     string  `json:"description,omitempty"`
+	Quantity        int     `json:"quantity,omitempty"`
+	Value           string  `json:"value,omitempty"`
+	Weight          float32 `json:"weight,omitempty"`
+	WeightUnits     string  `json:"weight_units,omitempty"`
+	HSTariffNumber  string  `json:"hs_tariff_number,omitempty"`
+	CountryOfOrigin string  `json:"country_of_origin,omitempty"`
 }
 
 // Custom is being used per Package. It is necessary only in international
 // packages.
 type Custom struct {
-	Type          string
-	Comments      string
-	InvoiceNumber string `json:"invoice_number"`
-	Contents      CustomContent
+	Type          string          `json:"type,omitempty"`
+	Comments      string          `json:"comments,omitempty"`
+	InvoiceNumber string          `json:"invoice_number,omitempty"`
+	Contents      []CustomContent `json:"contents,omitempty"`
 }
 
 // Shipment creates a brand new Shipment structure. Don't use new(postmaster.Shipment),
@@ -81,8 +82,7 @@ func (s *Shipment) Create() (*Shipment, error) {
 	if s.Id != -1 {
 		return nil, errors.New("You can't create an existing shipment.")
 	}
-	params := mapStruct(s)
-	_, err := post(s.p, "v1", "shipments", params, s)
+	_, err := post(s.p, "v1", "shipments", s, s)
 	return s, err
 }
 
