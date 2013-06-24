@@ -13,6 +13,7 @@ type Shipment struct {
 	To           *Address    `json:"to,omitempty"`
 	From         *Address    `json:"from,omitempty"`
 	Package      *Package    `json:"package"`
+	Packages     []Package   `json:"packages"`
 	Carrier      string      `json:"carrier"`
 	Service      string      `json:"service"`
 	Status       string      `json:"status,omitempty"`
@@ -48,13 +49,13 @@ type Package struct {
 
 // CustomContent is being used as a single item in Custom object.
 type CustomContent struct {
-	Description     string `json:"description,omitempty"`
-	Quantity        int    `json:"quantity,omitempty"`
-	Value           string `json:"value,omitempty"`
-	Weight          string `json:"weight,omitempty"`
-	WeightUnits     string `json:"weight_units,omitempty"`
-	HSTariffNumber  string `json:"hs_tariff_number,omitempty"`
-	CountryOfOrigin string `json:"country_of_origin,omitempty"`
+	Description     string  `json:"description,omitempty"`
+	Quantity        int     `json:"quantity,omitempty"`
+	Value           string  `json:"value,omitempty"`
+	Weight          float32 `json:"weight,omitempty"`
+	WeightUnits     string  `json:"weight_units,omitempty"`
+	HSTariffNumber  string  `json:"hs_tariff_number,omitempty"`
+	CountryOfOrigin string  `json:"country_of_origin,omitempty"`
 }
 
 // Custom is being used per Package. It is necessary only in international
