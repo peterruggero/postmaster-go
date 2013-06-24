@@ -40,7 +40,7 @@ func TestBoxCreate(t *testing.T) {
 func TestBoxGet(t *testing.T) {
 	// Mock
 	c := make(chan *restMockObj, 1)
-	get = restMock(c, nil, 100, nil)
+	get = restMockGet(c, nil, 100, nil)
 
 	pm := New("apikey")
 	b := pm.Box()
@@ -118,17 +118,11 @@ func TestBoxUpdate(t *testing.T) {
 func TestBoxList(t *testing.T) {
 	// Mock
 	c := make(chan *restMockObj, 1)
-	get = restMock(c, nil, 100, nil)
+	get = restMockGet(c, nil, 100, nil)
 
 	pm := New("apikey")
 	pm.ListBoxes(10, "cursor")
 	ret := <-c
-	if ret.params["limit"] != "10" {
-		t.Error("wrong limit in params")
-	}
-	if ret.params["cursor"] != "cursor" {
-		t.Error("wrong cursor in params")
-	}
 	if ret.endpoint != "packages" {
 		t.Error("wrong endpoint")
 	}
@@ -140,14 +134,14 @@ func TestBoxList(t *testing.T) {
 func TestFit(t *testing.T) {
 	// Mock
 	c := make(chan *restMockObj, 1)
-	postJson = restMockJson(c, nil, 100, nil)
+	post = restMock(c, nil, 100, nil)
 
 	pm := New("apikey")
 	boxes := []Box{Box{}, Box{}}
 	items := []Item{Item{}}
 	pm.Fit(boxes, items, 10)
 	ret := <-c
-	params := ret.paramsJson.(FitMessage)
+	params := ret.params.(FitMessage)
 	if len(params.Boxes) != 2 {
 		t.Error("wrong boxes count")
 	}

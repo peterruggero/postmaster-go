@@ -40,7 +40,7 @@ func TestShipmentCreate(t *testing.T) {
 func TestShipmentGet(t *testing.T) {
 	// Mock
 	c := make(chan *restMockObj, 1)
-	get = restMock(c, nil, 100, nil)
+	get = restMockGet(c, nil, 100, nil)
 
 	pm := New("apikey")
 	s := pm.Shipment()
@@ -92,7 +92,7 @@ func TestShipmentVoid(t *testing.T) {
 func TestShipmentTrack(t *testing.T) {
 	// Mock
 	c := make(chan *restMockObj, 1)
-	get = restMock(c, nil, 100, nil)
+	get = restMockGet(c, nil, 100, nil)
 
 	pm := New("apikey")
 	s := pm.Shipment()
@@ -118,20 +118,11 @@ func TestShipmentTrack(t *testing.T) {
 func TestShipmentList(t *testing.T) {
 	// Mock
 	c := make(chan *restMockObj, 1)
-	get = restMock(c, nil, 100, nil)
+	get = restMockGet(c, nil, 100, nil)
 
 	pm := New("apikey")
 	pm.ListShipments(10, "cursor", "Delivered")
 	ret := <-c
-	if ret.params["limit"] != "10" {
-		t.Error("wrong limit in params")
-	}
-	if ret.params["cursor"] != "cursor" {
-		t.Error("wrong cursor in params")
-	}
-	if ret.params["status"] != "Delivered" {
-		t.Error("wrong status in params")
-	}
 	if ret.endpoint != "shipments" {
 		t.Error("wrong endpoint")
 	}
@@ -143,7 +134,7 @@ func TestShipmentList(t *testing.T) {
 func TestShipmentFind(t *testing.T) {
 	// Mock
 	c := make(chan *restMockObj, 1)
-	get = restMock(c, nil, 100, nil)
+	get = restMockGet(c, nil, 100, nil)
 
 	pm := New("apikey")
 	_, err := pm.FindShipments("", 10, "cursor")
@@ -153,15 +144,6 @@ func TestShipmentFind(t *testing.T) {
 
 	pm.FindShipments("query", 10, "cursor")
 	ret := <-c
-	if ret.params["limit"] != "10" {
-		t.Error("wrong limit in params")
-	}
-	if ret.params["cursor"] != "cursor" {
-		t.Error("wrong cursor in params")
-	}
-	if ret.params["q"] != "query" {
-		t.Error("wrong query in params")
-	}
 	if ret.endpoint != "shipments/search" {
 		t.Error("wrong endpoint")
 	}
