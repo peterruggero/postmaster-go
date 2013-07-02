@@ -3,22 +3,22 @@ package postmaster
 // Address is used in Shipment requests (as From or To fields), or in validating
 // addresses.
 type Address struct {
-	Company    string
-	Contact    string
-	Line1      string
-	Line2      string
-	Line3      string
-	City       string
-	State      string
-	ZipCode    string `json:"zip_code"`
-	County     string
-	Latitude   string
-	Longitude  string
-	Notes      string
-	PhoneNo    string `json:"phone_no"`
-	Active     bool   `dontMap:"true"`
-	Commercial bool   `dontMap:"true"`
-	Residental bool   `dontMap:"true"`
+	Company    string `json:"company,omitempty"`
+	Contact    string `json:"contact,omitempty"`
+	Line1      string `json:"line1,omitempty"`
+	Line2      string `json:"line2,omitempty"`
+	Line3      string `json:"line3,omitempty"`
+	City       string `json:"city,omitempty"`
+	State      string `json:"state,omitempty"`
+	ZipCode    string `json:"zip_code,omitempty"`
+	Country    string `json:"country,omitempty"`
+	Latitude   string `json:"latitude,omitempty"`
+	Longitude  string `json:"longitude,omitempty"`
+	Notes      string `json:"notes,omitempty"`
+	PhoneNo    string `json:"phone_no,omitempty"`
+	Active     bool   `json:"active,omitempty"`
+	Commercial bool   `json:"commercial,omitempty"`
+	Residental bool   `json:"residental,omitempty"`
 }
 
 // AddressResponse is being sent back from API when asking to validate an address.
@@ -29,8 +29,7 @@ type AddressResponse struct {
 
 // Validate tries to validate given address.
 func (p *Postmaster) Validate(addr *Address) (*AddressResponse, error) {
-	params := mapStruct(addr)
 	res := new(AddressResponse)
-	_, err := post(p, "v1", "validate", params, &res)
+	_, err := post(p, "v1", "validate", addr, &res)
 	return res, err
 }

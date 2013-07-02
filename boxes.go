@@ -6,23 +6,18 @@ import (
 	"strconv"
 )
 
-// Reason why this structure is wholly JSON-mapped (every field has a "json" comment)
-// is that fitting package request is the only request that sends data using JSON
-// and not query params. Thus, we can't use our mapStruct, but must use json package
-// and its Marshal function.
-
 // Box (other name: Package; used Box here in order not to confuse with Shipment's Package)
 // is a container that we try to fit Items into.
 type Box struct {
-	p           *Postmaster `json:"-" dontMap:"true"`
-	Id          int         `json:"-" dontMap:"true"`
+	p           *Postmaster `json:"-"`
+	Id          int         `json:"-"`
 	Name        string      `json:"name"`
 	Width       float32     `json:"width"`
 	Height      float32     `json:"height"`
 	Length      float32     `json:"length"`
 	Weight      float32     `json:"weight"`
-	SizeUnits   string      `dontMap:"true" json:"size_units,omitempty"`
-	WeightUnits string      `dontMap:"true" json:"weight_units,omitempty"`
+	SizeUnits   string      `json:"size_units,omitempty"`
+	WeightUnits string      `json:"weight_units,omitempty"`
 }
 
 // Item is an object we try to fit into Boxes.
@@ -40,15 +35,10 @@ type Item struct {
 
 // BoxList is API response for List() function.
 type BoxList struct {
-	Results        []Box
-	Cursor         string
+	Results        []Box  `json:"results"`
+	Cursor         string `json:"cursor"`
 	PreviousCursor string `json:"previous_cursor"`
 }
-
-// Reason why this structure is wholly JSON-mapped (every field has a "json" comment)
-// is that fitting package request is the only request that sends data using JSON
-// and not query params. Thus, we can't use our mapStruct, but must use json package
-// and its Marshal function.
 
 // FitMessage is being sent to API in order to check whether given items fit given boxes.
 type FitMessage struct {
@@ -60,11 +50,11 @@ type FitMessage struct {
 // FitResponse is API response for trying to fit items into boxes.
 type FitResponse struct {
 	Boxes []struct {
-		Box   Box
-		Items []Item
+		Box   Box    `json:"box"`
+		Items []Item `json:"items"`
 	}
-	Leftovers []Item
-	AllFit    bool `json:"all_fit"`
+	Leftovers []Item `json:"leftovers"`
+	AllFit    bool   `json:"all_fit"`
 }
 
 // Box() creates new Box and assigns all important variables. Use this instead
@@ -82,9 +72,8 @@ func (b *Box) Create() (*Box, error) {
 	if b.Id != -1 {
 		return nil, errors.New("You can't create an existing box.")
 	}
-	params := mapStruct(b)
 	res := map[string]int{}
-	_, err := post(b.p, "v1", "packages", params, &res)
+	_, err := post(b.p, "v1", "packages", b, &res)
 	if err == nil {
 		b.Id = res["id"]
 	}
@@ -122,9 +111,8 @@ func (b *Box) Update() (*Box, error) {
 		return nil, errors.New("You must provide a box ID.")
 	}
 	endpoint := fmt.Sprintf("packages/%d", b.Id)
-	params := mapStruct(b)
 	res := map[string]string{}
-	_, err := put(b.p, "v1", endpoint, params, &res)
+	_, err := put(b.p, "v1", endpoint, b, &res)
 	return b, err
 }
 
@@ -148,14 +136,12 @@ func (p *Postmaster) ListBoxes(limit int, cursor string) (*BoxList, error) {
 
 // Fit checks if given items can be packed into given boxes.
 func (p *Postmaster) Fit(boxes []Box, items []Item, limit int) (*FitResponse, error) {
-	// Currently this is the only function that utilizes postJson function, as fitting
-	// items into boxes is the only API call that accepts JSON object.
 	params := FitMessage{
 		Boxes:        boxes,
 		Items:        items,
 		PackageLimit: limit,
 	}
 	res := new(FitResponse)
-	_, err := postJson(p, "v1", "packages/fit", params, &res)
+	_, err := post(p, "v1", "packages/fit", params, &res)
 	return res, err
 }

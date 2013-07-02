@@ -87,28 +87,28 @@ func (p *Postmaster) makeUrl(version string, endpoint string) string {
 // restMockObj is being sent to test case via a buffered channel to make sure
 // REST function was called with proper arguments.
 type restMockObj struct {
-	version    string
-	endpoint   string
-	params     map[string]string
-	paramsJson interface{}
+	version   string
+	endpoint  string
+	params    interface{}
+	paramsGet map[string]string
 }
 
 // restMock replaces function from rest.go file and just returns given object.
 // It communicates with test case via a buffered channel.
-func restMock(c chan *restMockObj, mocked interface{}, s int, err error) func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
-	return func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
+func restMock(c chan *restMockObj, mocked interface{}, s int, err error) func(p *Postmaster, version string, endpoint string, params interface{}, result interface{}) (status int, e error) {
+	return func(p *Postmaster, version string, endpoint string, params interface{}, result interface{}) (status int, e error) {
 		result = mocked
 		c <- &restMockObj{version: version, endpoint: endpoint, params: params}
 		return s, err
 	}
 }
 
-// restMock replaces JSON function from rest.go file and just returns given object.
+// restMock replaces function from rest.go file and just returns given object.
 // It communicates with test case via a buffered channel.
-func restMockJson(c chan *restMockObj, mocked interface{}, s int, err error) func(p *Postmaster, version string, endpoint string, params interface{}, result interface{}) (status int, e error) {
-	return func(p *Postmaster, version string, endpoint string, params interface{}, result interface{}) (status int, e error) {
+func restMockGet(c chan *restMockObj, mocked interface{}, s int, err error) func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
+	return func(p *Postmaster, version string, endpoint string, params map[string]string, result interface{}) (status int, e error) {
 		result = mocked
-		c <- &restMockObj{version: version, endpoint: endpoint, paramsJson: params}
+		c <- &restMockObj{version: version, endpoint: endpoint, paramsGet: params}
 		return s, err
 	}
 }

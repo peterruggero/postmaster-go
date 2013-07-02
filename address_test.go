@@ -21,13 +21,11 @@ func TestValidate(t *testing.T) {
 	if ret.version != "v1" {
 		t.Error("wrong version")
 	}
-	if len(ret.params) != 2 {
-		t.Error("wrong params length")
-	}
-	if ret.params["city"] != "Austin" {
+	params := ret.params.(*Address)
+	if params.City != "Austin" {
 		t.Error("wrong param (city)")
 	}
-	if ret.params["state"] != "TX" {
+	if params.State != "TX" {
 		t.Error("wrong param (state)")
 	}
 }
