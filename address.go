@@ -3,8 +3,8 @@ package postmaster
 // Address is used in Shipment requests (as From or To fields), or in validating
 // addresses.
 type Address struct {
-	Company    string `json:"company,omitempty"`
 	Contact    string `json:"contact,omitempty"`
+	Company    string `json:"company,omitempty"`
 	Line1      string `json:"line1,omitempty"`
 	Line2      string `json:"line2,omitempty"`
 	Line3      string `json:"line3,omitempty"`

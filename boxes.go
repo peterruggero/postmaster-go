@@ -18,6 +18,8 @@ type Box struct {
 	Weight      float32     `json:"weight"`
 	SizeUnits   string      `json:"size_units,omitempty"`
 	WeightUnits string      `json:"weight_units,omitempty"`
+	// These are returned by server
+	ImageUrl string `json:"image_url,omitempty"`
 }
 
 // Item is an object we try to fit into Boxes.
@@ -31,6 +33,8 @@ type Item struct {
 	Count       int     `json:"count"`
 	SizeUnits   string  `json:"size_units,omitempty"`
 	WeightUnits string  `json:"weight_units,omitempty"`
+	// These are returned by server
+	ImageUrl string `json:"image_url,omitempty"`
 }
 
 // BoxList is API response for List() function.
