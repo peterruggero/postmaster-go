@@ -145,6 +145,18 @@ Response object: `TrackingResponse`.
 **Note**: in case you need to track a shipment that was created by Postmaster, check Shipment Track above.
 
 
+### Monitoring external shipments ([documentation](https://www.postmaster.io/docs#track_mon))
+
+Don't use `new(postmaster.TrackingExternal)`, use `ship := pm.TrackingExternal()` instead. This creates new `TrackingExternal` structure and sets all necessary fields.
+
+	tr := pm.TrackingExternal()
+	tr.Tracking = "1Z1896X70305267337"
+	tr.Url = "http://your-website.com/webhook"
+	tr.Events = []string{"Delivered", "Exception"}
+	tr.Put()
+
+Response object: `boolean` indicating whether operation succeeded.
+
 ### Boxes ([documentation](https://www.postmaster.io/docs#createbox))
 
 #### Basic usage

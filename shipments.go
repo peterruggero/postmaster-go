@@ -7,21 +7,30 @@ import (
 )
 
 // Shipment is a base object used in Shipment API requests.
+// Options will always be a nested map of strings, meaning that you need to type
+// every nested interface as map[string]interface{} or map[string]string.
 type Shipment struct {
-	p            *Postmaster `json:"-"`
-	Id           int         `json:"id,omitempty"`
-	To           *Address    `json:"to,omitempty"`
-	From         *Address    `json:"from,omitempty"`
-	Package      *Package    `json:"package"`
-	Packages     []Package   `json:"packages"`
-	Carrier      string      `json:"carrier"`
-	Service      string      `json:"service"`
-	Status       string      `json:"status,omitempty"`
-	Tracking     []string    `json:"tracking,omitempty"`
-	PackageCount int         `json:"package_count,omitempty"`
-	CreatedAt    int         `json:"created_at,omitempty"`
-	Cost         int         `json:"cost,omitempty"`
-	Prepaid      bool        `json:"prepaid,omitempty"`
+	p  *Postmaster `json:"-"`
+	Id int         `json:"id,omitempty"`
+	// These fields are filled by User
+	To         *Address               `json:"to,omitempty"`
+	From       *Address               `json:"from,omitempty"`
+	Package    *Package               `json:"package"`
+	Packages   []Package              `json:"packages,omitempty"`
+	Carrier    string                 `json:"carrier"`
+	Service    string                 `json:"service"`
+	PONumber   string                 `json:"po_number,omitempty"`
+	References []string               `json:"references,omitempty"`
+	Options    map[string]interface{} `json:"options,omitempty"`
+	Signature  string                 `json:"signature,omitempty"`
+	Label      *Label                 `json:"label,omitempty"`
+	// These fields are returned by server
+	Status       string   `json:"status,omitempty"`
+	Tracking     []string `json:"tracking,omitempty"`
+	PackageCount int      `json:"package_count,omitempty"`
+	CreatedAt    int      `json:"created_at,omitempty"`
+	Cost         int      `json:"cost,omitempty"`
+	Prepaid      bool     `json:"prepaid,omitempty"`
 }
 
 // ShipmentList is returned when asking for list of shipments.
@@ -65,6 +74,13 @@ type Custom struct {
 	Comments      string          `json:"comments,omitempty"`
 	InvoiceNumber string          `json:"invoice_number,omitempty"`
 	Contents      []CustomContent `json:"contents,omitempty"`
+}
+
+// Label is used per Shipment
+type Label struct {
+	Type   string `json:"type,omitempty"`
+	Format string `json:"format,omitempty"`
+	Size   string `json:"size,omitempty"`
 }
 
 // Shipment creates a brand new Shipment structure. Don't use new(postmaster.Shipment),

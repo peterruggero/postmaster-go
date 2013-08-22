@@ -23,6 +23,30 @@ type TrackingResponse struct {
 	History    []TrackingHistory `json:"history"`
 }
 
+// TrackingExternal is used in requests for monitoring external packages.
+type TrackingExternal struct {
+	p          *Postmaster `json:"-"`
+	TrackingNo string      `json:"tracking_no,omitempty"`
+	Url        string      `json:"url,omitempty"`
+	Sms        string      `json:"sms,omitempty"`
+	Events     []string    `json:"events,omitempty"`
+}
+
+func (p *Postmaster) TrackingExternal() (t *TrackingExternal) {
+	t = new(TrackingExternal)
+	t.p = p
+	return
+}
+
+// Put sends TrackingExternal object to the server.
+func (t *TrackingExternal) Put() (success bool, err error) {
+	res := new(interface{})
+	var status int
+	status, err = post(t.p, "v1", "track", t, &res)
+	success = status == 200
+	return
+}
+
 // TrackRef method allows to track shipment by its reference number.
 func (p *Postmaster) TrackRef(trackingNumber string) (*TrackingResponse, error) {
 	params := make(map[string]string)
