@@ -13,7 +13,7 @@ func main() {
 	r.ToZip = "78704"
 	r.Weight = 2
 	resTemp, err := pm.Rate(r)
-	res := resTemp.(postmaster.RateResponseBest)
+	res := resTemp.(*postmaster.RateResponseBest)
 	if err != nil {
 		fmt.Println("Error:", err)
 	} else {
