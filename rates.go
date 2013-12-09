@@ -3,7 +3,7 @@ package postmaster
 // RateResponse contains response for single Carrier.
 type RateResponse struct {
 	Service  string `json:"service"`  // Type of service
-	Charge   string `json:"charge"`   // Cost of sending the shipment
+	Charge   int `json:"charge"`   // Cost of sending the shipment
 	Currency string `json:"currency"` // Currency
 }
 
