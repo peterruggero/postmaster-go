@@ -15,7 +15,7 @@ type Shipment struct {
 	// These fields are filled by User
 	To         *Address               `json:"to,omitempty"`
 	From       *Address               `json:"from,omitempty"`
-	Package    *Package               `json:"package"`
+	Package    *Package               `json:"package,omitempty"`
 	Packages   []Package              `json:"packages,omitempty"`
 	Carrier    string                 `json:"carrier"`
 	Service    string                 `json:"service"`
